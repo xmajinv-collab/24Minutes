@@ -28,10 +28,6 @@ export default function SeasonCard({
       {/* CONTENT */}
       <div className="relative z-10 flex flex-col justify-between h-full p-8">
 
-        <div className="text-5xl">
-          {emoji}
-        </div>
-
         <div>
 
           <h2 className="text-4xl font-bold text-white">
