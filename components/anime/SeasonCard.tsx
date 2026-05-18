@@ -1,4 +1,4 @@
-type SeasonCardProps = {
+type SeasonCard = {
   title: string;
   image: string;
 };
@@ -6,7 +6,7 @@ type SeasonCardProps = {
 export default function SeasonCard({
   title,
   image,
-}: SeasonCardProps) {
+}: SeasonCard) {
   return (
     <div className="group relative h-[260px] overflow-hidden rounded-3xl cursor-pointer">
 
