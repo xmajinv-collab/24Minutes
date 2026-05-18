@@ -32,7 +32,6 @@ export default function SeasonsSection() {
             <SeasonCard
               key={season.title}
               title={season.title}
-              emoji={season.emoji}
               image={season.image}
             />
           ))}
