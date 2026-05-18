@@ -1,12 +1,10 @@
 type SeasonCardProps = {
   title: string;
-  emoji?: string;
   image: string;
 };
 
 export default function SeasonCard({
   title,
-  emoji,
   image,
 }: SeasonCardProps) {
   return (
