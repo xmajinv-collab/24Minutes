@@ -1,6 +1,6 @@
 type SeasonCardProps = {
   title: string;
-  emoji: string;
+  emoji?: string;
   image: string;
 };
 
