@@ -1,12 +1,10 @@
-type SeasonCard = {
-  title: string;
-  image: string;
-};
-
 export default function SeasonCard({
   title,
   image,
-}: SeasonCard) {
+}: {
+  title: string;
+  image: string;
+}) {
   return (
     <div className="group relative h-[260px] overflow-hidden rounded-3xl cursor-pointer">
 
