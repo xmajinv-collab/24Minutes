@@ -19,10 +19,13 @@ export default function AnimeCard({
   return (
     <Link
       href={`/anime/${id}`}
-      className="group block transition duration-500 hover:-translate-y-2"
+      className="group block"
     >
 
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/40">
+      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/40 transition duration-500 group-hover:-translate-y-3 group-hover:border-white/20">
+
+        {/* BACKDROP GLOW */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 bg-gradient-to-t from-fuchsia-500/20 via-cyan-500/10 to-transparent blur-2xl" />
 
         {/* IMAGE */}
         <Image
@@ -33,14 +36,14 @@ export default function AnimeCard({
           className="w-full aspect-[2/3] object-cover transition duration-700 group-hover:scale-110"
         />
 
-        {/* OVERLAY */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
+        {/* DARK OVERLAY */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
-        {/* HOVER GLOW */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-t from-white/10 to-transparent backdrop-blur-[2px]" />
+        {/* HOVER OVERLAY */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-black/10 backdrop-blur-[2px]" />
 
         {/* SCORE */}
-        <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-sm border border-white/10">
+        <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-xl border border-white/10 text-sm font-medium shadow-xl">
 
           ⭐ {score || "N/A"}
 
@@ -49,7 +52,7 @@ export default function AnimeCard({
         {/* CONTENT */}
         <div className="absolute bottom-0 p-5 w-full">
 
-          <h3 className="font-semibold text-lg line-clamp-2 group-hover:text-zinc-200 transition">
+          <h3 className="font-semibold text-lg leading-snug text-white line-clamp-2 transition duration-300 group-hover:text-zinc-200">
 
             {title}
 

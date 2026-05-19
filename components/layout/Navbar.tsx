@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-import Link from "next/link";
-
 import Image from "next/image";
 
+import Link from "next/link";
+
 import { usePathname } from "next/navigation";
+
+import GlobalSearch from "@/components/ui/GlobalSearch";
 
 import {
   signIn,
   signOut,
   useSession,
 } from "next-auth/react";
-
-import GlobalSearch from "@/components/ui/GlobalSearch";
 
 export default function Navbar() {
 
@@ -51,10 +51,10 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-black/70 backdrop-blur-xl border-white/10"
-          : "bg-transparent border-transparent"
+          ? "bg-black/60 backdrop-blur-2xl border-b border-white/10 shadow-2xl shadow-black/20"
+          : "bg-transparent"
       }`}
     >
 
@@ -63,7 +63,7 @@ export default function Navbar() {
         {/* LOGO */}
         <Link
           href="/"
-          className="text-2xl font-bold tracking-wide text-white"
+          className="text-2xl font-black tracking-[0.2em] text-white transition duration-500 hover:text-zinc-200"
         >
           24 MINUTES
         </Link>
@@ -77,7 +77,7 @@ export default function Navbar() {
           {/* INICIO */}
           <Link
             href="/"
-            className={`relative transition hover:text-white ${
+            className={`relative transition duration-300 hover:text-white ${
               pathname === "/"
                 ? "text-white"
                 : "text-zinc-400"
@@ -86,7 +86,7 @@ export default function Navbar() {
             Inicio
 
             {pathname === "/" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white rounded-full" />
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
             )}
 
           </Link>
@@ -94,7 +94,7 @@ export default function Navbar() {
           {/* CATALOGO */}
           <Link
             href="/catalogo"
-            className={`relative transition hover:text-white ${
+            className={`relative transition duration-300 hover:text-white ${
               pathname === "/catalogo"
                 ? "text-white"
                 : "text-zinc-400"
@@ -103,7 +103,7 @@ export default function Navbar() {
             Catálogo
 
             {pathname === "/catalogo" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white rounded-full" />
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
             )}
 
           </Link>
@@ -111,7 +111,7 @@ export default function Navbar() {
           {/* TEMPORADAS */}
           <Link
             href="/temporadas"
-            className={`relative transition hover:text-white ${
+            className={`relative transition duration-300 hover:text-white ${
               pathname === "/temporadas"
                 ? "text-white"
                 : "text-zinc-400"
@@ -120,7 +120,7 @@ export default function Navbar() {
             Temporadas
 
             {pathname === "/temporadas" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white rounded-full" />
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
             )}
 
           </Link>
@@ -128,7 +128,7 @@ export default function Navbar() {
           {/* WATCHLIST */}
           <Link
             href="/watchlist"
-            className={`relative transition hover:text-white ${
+            className={`relative transition duration-300 hover:text-white ${
               pathname === "/watchlist"
                 ? "text-white"
                 : "text-zinc-400"
@@ -137,7 +137,24 @@ export default function Navbar() {
             Watchlist
 
             {pathname === "/watchlist" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white rounded-full" />
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
+            )}
+
+          </Link>
+
+          {/* PERFIL */}
+          <Link
+            href="/perfil"
+            className={`relative transition duration-300 hover:text-white ${
+              pathname === "/perfil"
+                ? "text-white"
+                : "text-zinc-400"
+            }`}
+          >
+            Perfil
+
+            {pathname === "/perfil" && (
+              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
             )}
 
           </Link>
@@ -155,7 +172,7 @@ export default function Navbar() {
                   alt={session.user.name || "User"}
                   width={42}
                   height={42}
-                  className="rounded-full border border-white/10"
+                  className="rounded-full border border-white/10 transition duration-300 hover:scale-110 hover:border-white/20"
                 />
 
               )}
@@ -163,7 +180,7 @@ export default function Navbar() {
               {/* LOGOUT */}
               <button
                 onClick={() => signOut()}
-                className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
+                className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-300 backdrop-blur-xl"
               >
                 Logout
               </button>
@@ -188,7 +205,7 @@ export default function Navbar() {
           onClick={() =>
             setMenuOpen(!menuOpen)
           }
-          className="md:hidden text-white text-2xl"
+          className="md:hidden text-white text-3xl transition duration-300 hover:scale-110"
         >
           ☰
         </button>
@@ -198,13 +215,13 @@ export default function Navbar() {
       {/* MOBILE MENU */}
       {menuOpen && (
 
-        <div className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/10">
+        <div className="md:hidden bg-black/95 backdrop-blur-2xl border-t border-white/10">
 
           <div className="flex flex-col p-6 gap-6 text-lg">
 
             <Link
               href="/"
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white transition duration-300"
               onClick={() =>
                 setMenuOpen(false)
               }
@@ -214,7 +231,7 @@ export default function Navbar() {
 
             <Link
               href="/catalogo"
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white transition duration-300"
               onClick={() =>
                 setMenuOpen(false)
               }
@@ -224,7 +241,7 @@ export default function Navbar() {
 
             <Link
               href="/temporadas"
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white transition duration-300"
               onClick={() =>
                 setMenuOpen(false)
               }
@@ -234,49 +251,23 @@ export default function Navbar() {
 
             <Link
               href="/watchlist"
-              className="text-zinc-300 hover:text-white transition"
+              className="text-zinc-300 hover:text-white transition duration-300"
               onClick={() =>
                 setMenuOpen(false)
               }
             >
               Watchlist
             </Link>
+
             <Link
               href="/perfil"
-              className={`relative transition hover:text-white ${
-                pathname === "/perfil"
-                  ? "text-white"
-                  : "text-zinc-400"
-              }`}
+              className="text-zinc-300 hover:text-white transition duration-300"
+              onClick={() =>
+                setMenuOpen(false)
+              }
             >
               Perfil
-
-              {pathname === "/perfil" && (
-                <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white rounded-full" />
-              )}
-
             </Link>
-
-            {/* MOBILE AUTH */}
-            {session?.user ? (
-
-              <button
-                onClick={() => signOut()}
-                className="text-left text-zinc-300 hover:text-white transition"
-              >
-                Logout
-              </button>
-
-            ) : (
-
-              <button
-                onClick={() => signIn("google")}
-                className="text-left text-zinc-300 hover:text-white transition"
-              >
-                Login
-              </button>
-
-            )}
 
           </div>
 

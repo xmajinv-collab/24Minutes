@@ -19,27 +19,44 @@ export default function TransitionProvider({
     usePathname();
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence
+      mode="wait"
+    >
 
       <motion.div
         key={pathname}
+
         initial={{
           opacity: 0,
-          y: 20,
+          y: 24,
+          scale: 0.985,
+          filter: "blur(8px)",
         }}
+
         animate={{
           opacity: 1,
           y: 0,
+          scale: 1,
+          filter: "blur(0px)",
         }}
+
         exit={{
           opacity: 0,
-          y: -20,
+          y: -24,
+          scale: 0.985,
+          filter: "blur(8px)",
         }}
+
         transition={{
-          duration: 0.4,
+          duration: 0.65,
+          ease: [0.22, 1, 0.36, 1],
         }}
+
+        className="min-h-screen will-change-transform"
       >
+
         {children}
+
       </motion.div>
 
     </AnimatePresence>

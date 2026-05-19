@@ -27,16 +27,76 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 
-  title: "24 MINUTES",
+  title: {
+    default: "24 MINUTES",
+    template: "%s | 24 MINUTES",
+  },
 
   description:
-    "Descubre anime, crea tu watchlist y explora nuevos mundos.",
+    "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
+
+  keywords: [
+    "anime",
+    "anime streaming",
+    "anime catalog",
+    "anime recommendations",
+    "24 minutes",
+    "otaku",
+    "anime platform",
+  ],
+
+  metadataBase: new URL(
+    "https://24-minutes.vercel.app"
+  ),
+
+  openGraph: {
+
+    title: "24 MINUTES",
+
+    description:
+      "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
+
+    url:
+      "https://24-minutes.vercel.app",
+
+    siteName: "24 MINUTES",
+
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
+
+    locale: "es_ES",
+
+    type: "website",
+
+  },
+
+  twitter: {
+
+    card: "summary_large_image",
+
+    title: "24 MINUTES",
+
+    description:
+      "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
+
+    images: ["/og-image.jpg"],
+
+  },
 
   icons: {
+
     icon: "/favicon.ico",
+
   },
 
 };
+
+
 
 export default function RootLayout({
   children,
@@ -50,7 +110,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
 
-      <body className="bg-black text-white overflow-x-hidden">
+      <body className="bg-black text-white overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
 
         <SessionProvider>
 
