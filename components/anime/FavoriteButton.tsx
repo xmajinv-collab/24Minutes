@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 
 import { supabase } from "@/lib/supabase";
 
-import { useSession } from "next-auth/react";
+import {
+  useSession,
+} from "next-auth/react";
 
 type FavoriteButtonProps = {
   anime: {
@@ -19,92 +24,145 @@ export default function FavoriteButton({
   anime,
 }: FavoriteButtonProps) {
 
-  const { data: session } = useSession();
+  const { data: session } =
+    useSession();
 
   const [isFavorite, setIsFavorite] =
     useState(false);
 
- useEffect(() => {
+  useEffect(() => {
 
-  const checkFavorite =
+    const checkFavorite =
+      async () => {
+
+        if (
+          !session?.user?.email
+        ) {
+          return;
+        }
+
+        const { data, error } =
+          await supabase
+            .from("favorites")
+            .select("*")
+            .eq(
+              "anime_id",
+              anime.mal_id
+            )
+            .eq(
+              "user_email",
+              session.user.email
+            );
+
+        console.log(
+          "CHECK FAVORITE:",
+          data
+        );
+
+        console.log(
+          "CHECK ERROR:",
+          error
+        );
+
+        setIsFavorite(
+          !!data?.length
+        );
+
+      };
+
+    checkFavorite();
+
+  }, [
+    anime.mal_id,
+    session,
+  ]);
+
+  const toggleFavorite =
     async () => {
 
-      if (!session?.user?.email)
+      if (
+        !session?.user?.email
+      ) {
+
+        console.log(
+          "NO SESSION"
+        );
+
         return;
+      }
 
-      const { data } =
-        await supabase
-          .from("favorites")
-          .select("*")
-          .eq(
-            "anime_id",
-            anime.mal_id
-          )
-          .eq(
-            "user_email",
-            session.user.email
-          );
-
-      setIsFavorite(
-        !!data?.length
-      );
-
-    };
-
-  checkFavorite();
-
-}, [
-  anime.mal_id,
-  session,
-]);
-
-
-  const toggleFavorite = async () => {
-
-  if (!session?.user?.email) return;
-
-  if (isFavorite) {
-
-    await supabase
-      .from("favorites")
-      .delete()
-      .eq(
-        "anime_id",
-        anime.mal_id
-      )
-      .eq(
-        "user_email",
+      console.log(
+        "SESSION:",
         session.user.email
       );
 
-    setIsFavorite(false);
+      if (isFavorite) {
 
-  } else {
+        const { error } =
+          await supabase
+            .from("favorites")
+            .delete()
+            .eq(
+              "anime_id",
+              anime.mal_id
+            )
+            .eq(
+              "user_email",
+              session.user.email
+            );
 
-    await supabase
-      .from("favorites")
-      .insert({
-        user_email:
-          session.user.email,
+        console.log(
+          "DELETE ERROR:",
+          error
+        );
 
-        anime_id:
-          anime.mal_id,
+        if (!error) {
+          setIsFavorite(false);
+        }
 
-        title:
-          anime.title,
+      } else {
 
-        image:
-          anime.image,
+        const {
+          data,
+          error,
+        } =
+          await supabase
+            .from("favorites")
+            .insert({
+              user_email:
+                session.user.email,
 
-        score:
-          anime.score,
-      });
+              anime_id:
+                anime.mal_id,
 
-    setIsFavorite(true);
+              title:
+                anime.title,
 
-  }
+              image:
+                anime.image,
 
-};
+              score:
+                anime.score,
+            });
+
+        console.log(
+          "INSERT:",
+          data
+        );
+
+        console.log(
+          "INSERT ERROR:",
+          error
+        );
+
+        if (!error) {
+          setIsFavorite(true);
+        }
+
+      }
+
+    };
+
   return (
     <button
       onClick={toggleFavorite}
@@ -114,9 +172,11 @@ export default function FavoriteButton({
           : "bg-white/5 border-white/10 hover:bg-white/10"
       }`}
     >
+
       {isFavorite
         ? "❤️ En favoritos"
         : "🤍 Añadir a favoritos"}
+
     </button>
   );
 }
