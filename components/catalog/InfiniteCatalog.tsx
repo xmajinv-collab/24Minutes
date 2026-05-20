@@ -197,10 +197,10 @@ export default function InfiniteCatalog({
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
 
-            {filteredAnime.map((anime) => (
+            {filteredAnime.map((anime, index) => (
 
               <AnimeCard
-                key={anime.mal_id}
+                key={`${anime.mal_id}-${index}`}
                 id={anime.mal_id}
                 title={anime.title}
                 image={

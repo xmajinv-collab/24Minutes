@@ -128,9 +128,18 @@ export default async function AnimePage({
             {/* FAVORITE */}
             <div className="mt-8">
 
-              <FavoriteButton
-                anime={anime}
-              />
+             <FavoriteButton
+              anime={{
+                mal_id: anime.mal_id,
+                title: anime.title,
+                image:
+                  anime.images.jpg
+                    .large_image_url ||
+                  anime.images.jpg
+                    .image_url,
+                score: anime.score,
+              }}
+            />
 
             </div>
 
