@@ -1,43 +1,57 @@
+import Link from "next/link";
+
+type SeasonCardProps = {
+  title: string;
+  image: string;
+  slug: string;
+};
+
 export default function SeasonCard({
   title,
   image,
-}: {
-  title: string;
-  image: string;
-}) {
+  slug,
+}: SeasonCardProps) {
+
   return (
-    <div className="group relative h-[260px] overflow-hidden rounded-3xl cursor-pointer">
+    <Link
+      href={`/temporadas/${slug}`}
+      className="block"
+    >
 
-      {/* IMAGE */}
-      <img
-        src={image}
-        alt={title}
-        className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110"
-      />
+      <div className="group relative h-[260px] overflow-hidden rounded-3xl cursor-pointer">
 
-      {/* OVERLAY */}
-      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500" />
+        {/* IMAGE */}
+        <img
+          src={image}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110"
+        />
 
-      {/* GRADIENT */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500" />
 
-      {/* CONTENT */}
-      <div className="relative z-10 flex flex-col justify-between h-full p-8">
+        {/* GRADIENT */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-        <div>
+        {/* CONTENT */}
+        <div className="relative z-10 flex flex-col justify-between h-full p-8">
 
-          <h2 className="text-4xl font-bold text-white">
-            {title}
-          </h2>
+          <div>
 
-          <p className="text-zinc-200 mt-2 text-lg">
-            Explora animes de temporada
-          </p>
+            <h2 className="text-4xl font-bold text-white">
+              {title}
+            </h2>
+
+            <p className="text-zinc-200 mt-2 text-lg">
+              Explora animes de temporada
+            </p>
+
+          </div>
 
         </div>
 
       </div>
 
-    </div>
+    </Link>
   );
 }

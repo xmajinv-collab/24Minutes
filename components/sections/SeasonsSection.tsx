@@ -29,12 +29,15 @@ export default function SeasonsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {SEASONS.map((season) => (
+
             <SeasonCard
-              key={season.title}
+              key={season.slug}
               title={season.title}
               image={season.image}
+              slug={season.slug}
             />
-          ))}
+
+))}
 
         </div>
         </Reveal>

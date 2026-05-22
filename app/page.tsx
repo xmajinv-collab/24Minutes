@@ -4,6 +4,8 @@ import TrendingSection from "@/components/sections/TrendingSection";
 
 import SeasonsSection from "@/components/sections/SeasonsSection";
 
+import NewsSection from "@/components/home/NewsSection";  
+
 export default async function Home() {
 
   return (
@@ -20,6 +22,11 @@ export default async function Home() {
       {/* SEASONS */}
       <div className="mt-40">
         <SeasonsSection />
+      </div>
+
+      {/* NEWS */}
+      <div className="mt-40">
+        <NewsSection />
       </div>
 
     </main>

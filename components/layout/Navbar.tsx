@@ -269,6 +269,16 @@ export default function Navbar() {
               Perfil
             </Link>
 
+            <Link
+            href="/news"
+            className="text-zinc-300 hover:text-white transition duration-300"
+            onClick={() =>
+              setMenuOpen(false)
+            }
+          >
+            Noticias
+          </Link>
+
           </div>
 
         </div>

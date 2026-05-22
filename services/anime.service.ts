@@ -24,18 +24,23 @@ export async function searchAnime(
   query: string
 ): Promise<Anime[]> {
 
-  const response = await fetch(
-    `https://api.jikan.moe/v4/anime?q=${query}`,
-    {
-      next: {
-        revalidate: 300,
-      },
-    }
-  );
+  const response =
+    await fetch(
 
-  const data = await response.json();
+      `https://api.jikan.moe/v4/anime?q=${query}&limit=10&sfw=true&order_by=score&sort=desc`,
 
-  return data.data;
+      {
+        next: {
+          revalidate: 300,
+        },
+      }
+    );
+
+  const data =
+    await response.json();
+
+  return data.data || [];
+
 }
 
 export async function getAnimeById(
@@ -66,6 +71,23 @@ export async function getAnimeRecommendations(
   return data.data;
 }
 
+export async function getAnimeCharacters(
+  id: string
+) {
+
+  const response =
+    await fetch(
+      `https://api.jikan.moe/v4/anime/${id}/characters`,
+      fetchOptions
+    );
+
+  const data =
+    await response.json();
+
+  return data.data;
+
+}
+
 export async function getSeasonAnime(
   page = 1
 ) {
@@ -78,4 +100,21 @@ export async function getSeasonAnime(
   const data = await response.json();
 
   return data.data;
+}
+
+export async function getAnimePictures(
+  id: string
+) {
+
+  const response =
+    await fetch(
+      `https://api.jikan.moe/v4/anime/${id}/pictures`,
+      fetchOptions
+    );
+
+  const data =
+    await response.json();
+
+  return data.data;
+
 }
