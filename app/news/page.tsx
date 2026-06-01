@@ -12,65 +12,89 @@ export default async function NewsPage() {
 
       <Container>
 
-        {/* HEADER */}
-        <div className="mb-16">
+        {/* HERO */}
+        <section className="relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-8 md:p-12 mb-20">
 
-          <h1 className="text-5xl md:text-7xl font-black">
+          <div className="absolute top-[-100px] left-[-100px] w-[250px] h-[250px] bg-fuchsia-500/10 rounded-full blur-[120px]" />
 
-            Anime News
+          <div className="absolute bottom-[-100px] right-[-100px] w-[250px] h-[250px] bg-cyan-500/10 rounded-full blur-[120px]" />
 
-          </h1>
+          <div className="relative z-10">
 
-          <p className="text-zinc-400 mt-6 text-lg max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zinc-300 mb-6">
 
-            Mantente al día con las últimas noticias del mundo anime y manga.
+              📰 Anime News
 
-          </p>
+            </div>
 
-        </div>
+            <h1 className="text-4xl md:text-7xl font-black">
+
+              Noticias Anime
+            </h1>
+
+            <p className="text-zinc-400 mt-6 text-base md:text-lg max-w-3xl leading-relaxed">
+
+              Mantente al día con las últimas noticias,
+              anuncios, estrenos y novedades del mundo anime y manga.
+
+            </p>
+
+          </div>
+
+        </section>
 
         {/* NEWS GRID */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
 
-          {news.map((item, index) => (
+          {news.map(
+            (item, index) => (
 
             <a
               key={index}
               href={item.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="group border border-white/10 bg-white/5 rounded-3xl p-8 hover:bg-white/10 transition duration-300"
+              className="group rounded-[32px] border border-white/10 bg-white/[0.03] overflow-hidden hover:bg-white/[0.05] hover:border-white/20 transition duration-500"
             >
 
-              <div className="flex items-center gap-3 text-sm text-zinc-500 mb-5">
+              {/* TOP */}
+              <div className="h-2 bg-gradient-to-r from-fuchsia-500 to-cyan-500" />
 
-                <span>
-                  NEWS
-                </span>
+              {/* CONTENT */}
+              <div className="p-8">
 
-                <span>
-                  •
-                </span>
+                <div className="flex items-center gap-3 text-sm text-zinc-500 mb-5">
 
-                <span>
-                  {new Date(
-                    item.pubDate || ""
-                  ).toLocaleDateString()}
-                </span>
+                  <span>
+                    NEWS
+                  </span>
+
+                  <span>
+                    •
+                  </span>
+
+                  <span>
+
+                    {new Date(
+                      item.pubDate || ""
+                    ).toLocaleDateString()}
+
+                  </span>
+
+                </div>
+
+                <h2 className="text-xl md:text-2xl font-bold leading-snug group-hover:text-fuchsia-300 transition">
+
+                  {item.title}
+
+                </h2>
+
+                <div className="mt-8 text-zinc-400 group-hover:text-white transition">
+
+                  Leer noticia →
+                </div>
 
               </div>
-
-              <h2 className="text-2xl font-bold leading-snug group-hover:text-fuchsia-300 transition">
-
-                {item.title}
-
-              </h2>
-
-              <p className="text-zinc-400 mt-6">
-
-                Leer noticia completa →
-
-              </p>
 
             </a>
 

@@ -27,31 +27,58 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 
-  title: {
-    default: "24 MINUTES",
-    template: "%s | 24 MINUTES",
-  },
-
-  description:
-    "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
-
-  keywords: [
-    "anime",
-    "anime streaming",
-    "anime catalog",
-    "anime recommendations",
-    "24 minutes",
-    "otaku",
-    "anime platform",
-  ],
-
   metadataBase: new URL(
     "https://24-minutes.vercel.app"
   ),
 
+  title: {
+    default:
+      "24 MINUTES - Descubre Anime",
+    template:
+      "%s | 24 MINUTES",
+  },
+
+  description:
+    "Explora temporadas, descubre nuevos animes, guarda favoritos y encuentra recomendaciones personalizadas.",
+
+  keywords: [
+    "anime",
+    "anime catalog",
+    "anime finder",
+    "anime tracker",
+    "anime recommendations",
+    "anime favorites",
+    "top anime",
+    "seasonal anime",
+    "anime database",
+    "otaku",
+    "24 minutes",
+  ],
+
+  authors: [
+    {
+      name: "24 MINUTES",
+    },
+  ],
+
+  creator:
+    "24 MINUTES",
+
+  publisher:
+    "24 MINUTES",
+
+  category:
+    "entertainment",
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
   openGraph: {
 
-    title: "24 MINUTES",
+    title:
+      "24 MINUTES",
 
     description:
       "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
@@ -59,44 +86,62 @@ export const metadata: Metadata = {
     url:
       "https://24-minutes.vercel.app",
 
-    siteName: "24 MINUTES",
+    siteName:
+      "24 MINUTES",
+
+    locale:
+      "es_ES",
+
+    type:
+      "website",
 
     images: [
       {
-        url: "/og-image.jpg",
+        url:
+          "/og-image.jpg",
+
         width: 1200,
+
         height: 630,
+
+        alt:
+          "24 MINUTES Anime Platform",
       },
     ],
-
-    locale: "es_ES",
-
-    type: "website",
 
   },
 
   twitter: {
 
-    card: "summary_large_image",
+    card:
+      "summary_large_image",
 
-    title: "24 MINUTES",
+    title:
+      "24 MINUTES",
 
     description:
       "Explora temporadas, descubre nuevos animes y vive tu universo anime.",
 
-    images: ["/og-image.jpg"],
+    images: [
+      "/og-image.jpg",
+    ],
 
   },
 
   icons: {
 
-    icon: "/favicon.ico",
+    icon:
+      "/favicon.ico",
+
+    shortcut:
+      "/favicon.ico",
+
+    apple:
+      "/favicon.ico",
 
   },
 
 };
-
-
 
 export default function RootLayout({
   children,
@@ -107,24 +152,24 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      data-scroll-behavior="smooth"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
 
-      <body className="bg-black text-white overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
+      <body className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-fuchsia-500/30 selection:text-white">
 
         <SessionProvider>
 
           <TransitionProvider>
 
             {/* GLOBAL BACKGROUND */}
-            <div className="fixed inset-0 -z-10 overflow-hidden">
+            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
 
               {/* TOP GLOW */}
               <div className="absolute top-[-200px] left-[-200px] w-[500px] h-[500px] bg-fuchsia-500/10 rounded-full blur-[180px]" />
 
               {/* RIGHT GLOW */}
-              <div className="absolute top-[30%] right-[-150px] w-[400px] h-[400px] bg-sky-500/10 rounded-full blur-[180px]" />
+              <div className="absolute top-[30%] right-[-150px] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[180px]" />
 
               {/* BOTTOM GLOW */}
               <div className="absolute bottom-[-200px] left-[20%] w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-[180px]" />
@@ -135,7 +180,11 @@ export default function RootLayout({
             <Navbar />
 
             {/* PAGE CONTENT */}
-            {children}
+            <div className="relative">
+
+              {children}
+
+            </div>
 
             {/* FOOTER */}
             <Footer />
