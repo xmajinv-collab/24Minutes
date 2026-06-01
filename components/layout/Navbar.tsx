@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import Image from "next/image";
-
 import Link from "next/link";
 
-import { usePathname } from "next/navigation";
+import {
+  useEffect,
+  useState,
+} from "react";
 
-import GlobalSearch from "@/components/ui/GlobalSearch";
+import {
+  usePathname,
+} from "next/navigation";
 
 import {
   signIn,
@@ -18,21 +19,27 @@ import {
 
 export default function Navbar() {
 
+  const pathname =
+    usePathname();
+
+  const {
+    data: session,
+  } = useSession();
+
   const [scrolled, setScrolled] =
     useState(false);
 
   const [menuOpen, setMenuOpen] =
     useState(false);
 
-  const pathname = usePathname();
-
-  const { data: session } =
-    useSession();
-
   useEffect(() => {
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+
+      setScrolled(
+        window.scrollY > 20
+      );
+
     };
 
     window.addEventListener(
@@ -41,250 +48,316 @@ export default function Navbar() {
     );
 
     return () => {
+
       window.removeEventListener(
         "scroll",
         handleScroll
       );
+
     };
 
   }, []);
 
+  useEffect(() => {
+
+    document.body.style.overflow =
+      menuOpen
+        ? "hidden"
+        : "auto";
+
+  }, [menuOpen]);
+
+  const navLinks = [
+    {
+      href: "/",
+      label: "Inicio",
+    },
+
+    {
+      href: "/catalogo",
+      label: "Catálogo",
+    },
+
+    {
+      href: "/temporadas",
+      label: "Temporadas",
+    },
+
+    {
+      href: "/watchlist",
+      label: "Watchlist",
+    },
+
+    {
+      href: "/news",
+      label: "Noticias",
+    },
+  ];
+
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-black/60 backdrop-blur-2xl border-b border-white/10 shadow-2xl shadow-black/20"
-          : "bg-transparent"
-      }`}
-    >
+    <>
 
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <nav
+        className={`fixed top-4 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl z-50 rounded-[32px] border transition-all duration-700 ${
+          scrolled
+            ? "bg-black/70 backdrop-blur-2xl border-white/10 shadow-2xl shadow-black/40"
+            : "bg-white/[0.03] backdrop-blur-xl border-white/5"
+        }`}
+      >
 
-        {/* LOGO */}
-        <Link
-          href="/"
-          className="text-2xl font-black tracking-[0.2em] text-white transition duration-500 hover:text-zinc-200"
-        >
-          24 MINUTES
-        </Link>
+        <div className="px-5 md:px-8 py-4 flex items-center justify-between">
 
-        {/* DESKTOP NAV */}
-        <div className="hidden md:flex items-center gap-8">
-
-          {/* SEARCH */}
-          <GlobalSearch />
-
-          {/* INICIO */}
+          {/* LOGO */}
           <Link
             href="/"
-            className={`relative transition duration-300 hover:text-white ${
-              pathname === "/"
-                ? "text-white"
-                : "text-zinc-400"
-            }`}
+            className="text-lg sm:text-xl md:text-2xl font-black tracking-[0.25em] text-white transition duration-500 hover:text-zinc-200 hover:scale-[1.02]"
           >
-            Inicio
 
-            {pathname === "/" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
-            )}
+            24 MINUTES
 
           </Link>
 
-          {/* CATALOGO */}
-          <Link
-            href="/catalogo"
-            className={`relative transition duration-300 hover:text-white ${
-              pathname === "/catalogo"
-                ? "text-white"
-                : "text-zinc-400"
-            }`}
-          >
-            Catálogo
+          {/* DESKTOP NAV */}
+          <div className="hidden md:flex items-center gap-8">
 
-            {pathname === "/catalogo" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
+            {navLinks.map(
+              (link) => {
+
+              const isActive =
+                pathname ===
+                link.href;
+
+              return (
+
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative text-sm tracking-wide transition duration-300 ${
+                    isActive
+                      ? "text-white"
+                      : "text-zinc-400 hover:text-white"
+                  }`}
+                >
+
+                  {link.label}
+
+                  {/* ACTIVE LINE */}
+                  <span
+                    className={`absolute -bottom-2 left-0 h-[2px] bg-white rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "w-full"
+                        : "w-0"
+                    }`}
+                  />
+
+                </Link>
+
+              );
+
+            })}
+
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="flex items-center gap-4">
+
+            {/* PROFILE */}
+            {session?.user && (
+
+              <Link
+                href="/perfil"
+                className="hidden md:flex items-center gap-3 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-300"
+              >
+
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10">
+
+                  {session.user.image && (
+
+                    <img
+                      src={
+                        session.user.image
+                      }
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+
+                  )}
+
+                </div>
+
+                <span className="text-sm text-zinc-300">
+
+                  Perfil
+
+                </span>
+
+              </Link>
+
             )}
 
-          </Link>
+            {/* AUTH */}
+            <div className="hidden md:flex items-center">
 
-          {/* TEMPORADAS */}
-          <Link
-            href="/temporadas"
-            className={`relative transition duration-300 hover:text-white ${
-              pathname === "/temporadas"
-                ? "text-white"
-                : "text-zinc-400"
-            }`}
+              {session?.user ? (
+
+                <button
+                  onClick={() =>
+                    signOut()
+                  }
+                  className="px-5 py-2.5 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300"
+                >
+
+                  Logout
+
+                </button>
+
+              ) : (
+
+                <button
+                  onClick={() =>
+                    signIn("google")
+                  }
+                  className="px-5 py-2.5 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300"
+                >
+
+                  Login
+
+                </button>
+
+              )}
+
+            </div>
+
+            {/* MOBILE BUTTON */}
+            <button
+              onClick={() =>
+                setMenuOpen(
+                  !menuOpen
+                )
+              }
+              className="md:hidden text-white text-3xl transition duration-300 hover:scale-110"
+            >
+
+              {menuOpen
+                ? "✕"
+                : "☰"}
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </nav>
+
+      {/* MOBILE MENU */}
+      <div
+        className={`fixed inset-0 z-[999] md:hidden transition-all duration-500 ${
+          menuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+
+        {/* BACKDROP */}
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-3xl" />
+
+        {/* CONTENT */}
+        <div className="relative flex flex-col items-center justify-center h-full gap-10 px-8">
+
+          {/* CLOSE */}
+          <button
+            onClick={() =>
+              setMenuOpen(false)
+            }
+            className="absolute top-8 right-8 text-4xl text-white hover:scale-110 transition"
           >
-            Temporadas
 
-            {pathname === "/temporadas" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
-            )}
+            ✕
 
-          </Link>
+          </button>
 
-          {/* WATCHLIST */}
-          <Link
-            href="/watchlist"
-            className={`relative transition duration-300 hover:text-white ${
-              pathname === "/watchlist"
-                ? "text-white"
-                : "text-zinc-400"
-            }`}
-          >
-            Watchlist
+          {/* LINKS */}
+          {navLinks.map(
+            (link) => {
 
-            {pathname === "/watchlist" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
-            )}
+            const isActive =
+              pathname ===
+              link.href;
 
-          </Link>
+            return (
 
-          {/* PERFIL */}
-          <Link
-            href="/perfil"
-            className={`relative transition duration-300 hover:text-white ${
-              pathname === "/perfil"
-                ? "text-white"
-                : "text-zinc-400"
-            }`}
-          >
-            Perfil
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() =>
+                  setMenuOpen(false)
+                }
+                className={`text-3xl font-semibold transition duration-300 ${
+                  isActive
+                    ? "text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
 
-            {pathname === "/perfil" && (
-              <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-fuchsia-500 to-cyan-400 rounded-full shadow-lg shadow-fuchsia-500/20" />
-            )}
+                {link.label}
 
-          </Link>
+              </Link>
+
+            );
+
+          })}
+
+          {/* PROFILE */}
+          {session?.user && (
+
+            <Link
+              href="/perfil"
+              onClick={() =>
+                setMenuOpen(false)
+              }
+              className="mt-6 text-zinc-300 hover:text-white transition"
+            >
+
+              Perfil
+
+            </Link>
+
+          )}
 
           {/* AUTH */}
           {session?.user ? (
 
-            <div className="flex items-center gap-4">
+            <button
+              onClick={() =>
+                signOut()
+              }
+              className="mt-10 px-8 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300"
+            >
 
-              {/* AVATAR */}
-              {session.user.image && (
+              Logout
 
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || "User"}
-                  width={42}
-                  height={42}
-                  className="rounded-full border border-white/10 transition duration-300 hover:scale-110 hover:border-white/20"
-                />
-
-              )}
-
-              {/* LOGOUT */}
-              <button
-                onClick={() => signOut()}
-                className="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-300 backdrop-blur-xl"
-              >
-                Logout
-              </button>
-
-            </div>
+            </button>
 
           ) : (
 
             <button
-              onClick={() => signIn("google")}
-              className="px-5 py-2 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300"
+              onClick={() =>
+                signIn("google")
+              }
+              className="mt-10 px-8 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300"
             >
+
               Login
+
             </button>
 
           )}
 
         </div>
 
-        {/* MOBILE BUTTON */}
-        <button
-          onClick={() =>
-            setMenuOpen(!menuOpen)
-          }
-          className="md:hidden text-white text-3xl transition duration-300 hover:scale-110"
-        >
-          ☰
-        </button>
-
       </div>
 
-      {/* MOBILE MENU */}
-      {menuOpen && (
-
-        <div className="md:hidden bg-black/95 backdrop-blur-2xl border-t border-white/10">
-
-          <div className="flex flex-col p-6 gap-6 text-lg">
-
-            <Link
-              href="/"
-              className="text-zinc-300 hover:text-white transition duration-300"
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              Inicio
-            </Link>
-
-            <Link
-              href="/catalogo"
-              className="text-zinc-300 hover:text-white transition duration-300"
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              Catálogo
-            </Link>
-
-            <Link
-              href="/temporadas"
-              className="text-zinc-300 hover:text-white transition duration-300"
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              Temporadas
-            </Link>
-
-            <Link
-              href="/watchlist"
-              className="text-zinc-300 hover:text-white transition duration-300"
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              Watchlist
-            </Link>
-
-            <Link
-              href="/perfil"
-              className="text-zinc-300 hover:text-white transition duration-300"
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
-              Perfil
-            </Link>
-
-            <Link
-            href="/news"
-            className="text-zinc-300 hover:text-white transition duration-300"
-            onClick={() =>
-              setMenuOpen(false)
-            }
-          >
-            Noticias
-          </Link>
-
-          </div>
-
-        </div>
-
-      )}
-
-    </nav>
+    </>
   );
 }

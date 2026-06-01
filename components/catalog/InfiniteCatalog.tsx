@@ -1,31 +1,19 @@
 "use client";
 
 import {
-  useEffect,
   useMemo,
   useState,
 } from "react";
 
 import AnimeCard from "@/components/anime/AnimeCard";
 
-import SkeletonCard from "@/components/ui/SkeletonCard";
-
-type InfiniteCatalogProps = {
+type Props = {
   initialAnime: any[];
 };
 
 export default function InfiniteCatalog({
   initialAnime,
-}: InfiniteCatalogProps) {
-
-  const [animeList, setAnimeList] =
-    useState(initialAnime || []);
-
-  const [page, setPage] =
-    useState(2);
-
-  const [loading, setLoading] =
-    useState(false);
+}: Props) {
 
   const [query, setQuery] =
     useState("");
@@ -36,123 +24,63 @@ export default function InfiniteCatalog({
   const [genre, setGenre] =
     useState("all");
 
-  const [yearFilter, setYearFilter] =
-    useState("all");
+  const [
+    yearFilter,
+    setYearFilter,
+  ] = useState("all");
 
-  const [statusFilter, setStatusFilter] =
-    useState("all");
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] = useState("all");
 
-  const [minScore, setMinScore] =
-    useState(0);
+  const [
+    minScore,
+    setMinScore,
+  ] = useState(0);
 
-  async function loadMore() {
-
-    if (loading) return;
-
-    setLoading(true);
-
-    const response = await fetch(
-      `https://api.jikan.moe/v4/top/anime?page=${page}`
-    );
-
-    const data =
-      await response.json();
-
-    setAnimeList((prev) => [
-      ...prev,
-      ...(data.data || []),
-    ]);
-
-    setPage((prev) => prev + 1);
-
-    setLoading(false);
-
-  }
-
-  useEffect(() => {
-
-    const handleScroll = () => {
-
-      if (
-        window.innerHeight +
-          window.scrollY >=
-        document.body.offsetHeight - 1000
-      ) {
-
-        loadMore();
-
-      }
-
-    };
-
-    window.addEventListener(
-      "scroll",
-      handleScroll
-    );
-
-    return () => {
-
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
-
-    };
-
-  }, [page, loading]);
+  const animeList =
+    initialAnime || [];
 
   const filteredAnime =
     useMemo(() => {
 
       let filtered =
-        (animeList || []).filter(
-          (anime) => {
+        animeList.filter((anime) =>
 
-            const matchesQuery =
-              anime.title
-                ?.toLowerCase()
-                .includes(
-                  query.toLowerCase()
-                );
+          anime.title
+            ?.toLowerCase()
+            .includes(
+              query.toLowerCase()
+            ) &&
 
-            const matchesGenre =
-              genre === "all" ||
+          (genre === "all" ||
 
-              anime.genres?.some(
-                (g: any) =>
-                  g.name === genre
-              );
+            anime.genres?.some(
+              (g: any) =>
+                g.name === genre
+            )) &&
 
-            const matchesYear =
-              yearFilter ===
-                "all" ||
+          (yearFilter ===
+            "all" ||
 
-              anime.year?.toString() ===
-                yearFilter;
+            anime.year?.toString() ===
+              yearFilter) &&
 
-            const matchesStatus =
-              statusFilter ===
-                "all" ||
+          (statusFilter ===
+            "all" ||
 
-              anime.status ===
-                statusFilter;
+            anime.status ===
+              statusFilter) &&
 
-            const matchesScore =
-              (anime.score || 0) >=
-              minScore;
+          (anime.score || 0) >=
+            minScore
 
-            return (
-              matchesQuery &&
-              matchesGenre &&
-              matchesYear &&
-              matchesStatus &&
-              matchesScore
-            );
-
-          }
         );
 
-      if (sort === "score") {
+      if (
+        sort === "score"
+      ) {
 
         filtered.sort(
           (a, b) =>
@@ -163,18 +91,21 @@ export default function InfiniteCatalog({
       }
 
       if (
-        sort === "popularity"
+        sort ===
+        "popularity"
       ) {
 
         filtered.sort(
           (a, b) =>
-            (a.popularity || 0) -
-            (b.popularity || 0)
+            (a.rank || 9999) -
+            (b.rank || 9999)
         );
 
       }
 
-      if (sort === "year") {
+      if (
+        sort === "year"
+      ) {
 
         filtered.sort(
           (a, b) =>
@@ -197,270 +128,308 @@ export default function InfiniteCatalog({
     ]);
 
   return (
-    <div className="mt-16">
+    <section className="mt-20 pb-32">
 
-      {/* FILTERS */}
-      <div className="flex flex-wrap gap-4 mb-12">
+      {/* FILTER PANEL */}
+      <div className="rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-6 md:p-8 mb-14">
 
-        {/* SEARCH */}
-        <input
-          type="text"
-          placeholder="Buscar anime..."
-          value={query}
-          onChange={(e) =>
-            setQuery(
-              e.target.value
-            )
-          }
-          className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition backdrop-blur-xl text-white placeholder:text-zinc-500"
-        />
+        {/* FILTERS */}
+        <div className="flex flex-wrap gap-4">
 
-        {/* SORT */}
-        <select
-          value={sort}
-          onChange={(e) =>
-            setSort(
-              e.target.value
-            )
-          }
-          className="bg-zinc-900 text-white border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition"
-        >
+          {/* SEARCH */}
+          <input
+            type="text"
+            placeholder="Buscar anime..."
+            value={query}
+            onChange={(e) =>
+              setQuery(
+                e.target.value
+              )
+            }
+            className="flex-1 min-w-[220px] bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition backdrop-blur-xl"
+          />
 
-          <option value="score">
-            Top Score
-          </option>
+          {/* SORT */}
+          <select
+            value={sort}
+            onChange={(e) =>
+              setSort(
+                e.target.value
+              )
+            }
+            className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-zinc-300"
+          >
 
-          <option value="popularity">
-            Popularidad
-          </option>
+            <option value="score">
 
-          <option value="year">
-            Más nuevos
-          </option>
+              Top Score
 
-        </select>
+            </option>
 
-        {/* GENRE */}
-        <select
-          value={genre}
-          onChange={(e) =>
-            setGenre(
-              e.target.value
-            )
-          }
-          className="bg-zinc-900 text-white border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition"
-        >
+            <option value="popularity">
 
-          <option value="all">
-            Género
-          </option>
+              Popularidad
 
-          <option value="Action">
-            Action
-          </option>
+            </option>
 
-          <option value="Adventure">
-            Adventure
-          </option>
+            <option value="year">
 
-          <option value="Comedy">
-            Comedy
-          </option>
+              Más nuevos
 
-          <option value="Drama">
-            Drama
-          </option>
+            </option>
 
-          <option value="Fantasy">
-            Fantasy
-          </option>
+          </select>
 
-          <option value="Romance">
-            Romance
-          </option>
+          {/* GENRE */}
+          <select
+            value={genre}
+            onChange={(e) =>
+              setGenre(
+                e.target.value
+              )
+            }
+            className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-zinc-300"
+          >
 
-          <option value="Sci-Fi">
-            Sci-Fi
-          </option>
+            <option value="all">
 
-          <option value="Psychological">
-            Psychological
-          </option>
+              Género
 
-        </select>
+            </option>
 
-        {/* YEAR */}
-        <select
-          value={yearFilter}
-          onChange={(e) =>
-            setYearFilter(
-              e.target.value
-            )
-          }
-          className="bg-zinc-900 text-white border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition"
-        >
+            <option value="Action">
 
-          <option value="all">
-            Año
-          </option>
+              Action
 
-          <option value="2026">
-            2026
-          </option>
+            </option>
 
-          <option value="2025">
-            2025
-          </option>
+            <option value="Adventure">
 
-          <option value="2024">
-            2024
-          </option>
+              Adventure
 
-          <option value="2023">
-            2023
-          </option>
+            </option>
 
-        </select>
+            <option value="Comedy">
 
-        {/* STATUS */}
-        <select
-          value={statusFilter}
-          onChange={(e) =>
-            setStatusFilter(
-              e.target.value
-            )
-          }
-          className="bg-zinc-900 text-white border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-white/20 transition"
-        >
+              Comedy
 
-          <option value="all">
-            Estado
-          </option>
+            </option>
 
-          <option value="Currently Airing">
-            Airing
-          </option>
+            <option value="Drama">
 
-          <option value="Finished Airing">
-            Finished
-          </option>
+              Drama
 
-        </select>
+            </option>
 
-      </div>
+            <option value="Fantasy">
 
-      {/* SCORE */}
-      <div className="mb-10">
+              Fantasy
 
-        <div className="flex items-center justify-between mb-3">
+            </option>
 
-          <p className="text-zinc-400">
-            Score mínimo
-          </p>
+            <option value="Romance">
 
-          <p className="text-white font-semibold">
-            {minScore}
-          </p>
+              Romance
+
+            </option>
+
+            <option value="Sci-Fi">
+
+              Sci-Fi
+
+            </option>
+
+            <option value="Psychological">
+
+              Psychological
+
+            </option>
+
+          </select>
+
+          {/* YEAR */}
+          <select
+            value={yearFilter}
+            onChange={(e) =>
+              setYearFilter(
+                e.target.value
+              )
+            }
+            className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-zinc-300"
+          >
+
+            <option value="all">
+
+              Año
+
+            </option>
+
+            <option value="2026">
+
+              2026
+
+            </option>
+
+            <option value="2025">
+
+              2025
+
+            </option>
+
+            <option value="2024">
+
+              2024
+
+            </option>
+
+            <option value="2023">
+
+              2023
+
+            </option>
+
+          </select>
+
+          {/* STATUS */}
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              setStatusFilter(
+                e.target.value
+              )
+            }
+            className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-zinc-300"
+          >
+
+            <option value="all">
+
+              Estado
+
+            </option>
+
+            <option value="Currently Airing">
+
+              Airing
+
+            </option>
+
+            <option value="Finished Airing">
+
+              Finished
+
+            </option>
+
+          </select>
 
         </div>
 
-        <input
-          type="range"
-          min="0"
-          max="10"
-          step="1"
-          value={minScore}
-          onChange={(e) =>
-            setMinScore(
-              Number(
-                e.target.value
+        {/* SCORE */}
+        <div className="mt-8">
+
+          <div className="flex items-center justify-between mb-3">
+
+            <p className="text-zinc-400">
+
+              Score mínimo
+
+            </p>
+
+            <p className="text-white font-semibold">
+
+              {minScore}
+
+            </p>
+
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="10"
+            step="1"
+            value={minScore}
+            onChange={(e) =>
+              setMinScore(
+                Number(
+                  e.target.value
+                )
               )
-            )
-          }
-          className="w-full accent-fuchsia-500"
-        />
+            }
+            className="w-full accent-white"
+          />
+
+        </div>
 
       </div>
 
       {/* RESULTS */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
 
-        <p className="text-zinc-400">
+        <div>
 
-          {filteredAnime.length}
-          {" "}
-          animes encontrados
+          <h2 className="text-3xl md:text-4xl font-black">
 
-        </p>
-
-      </div>
-
-      {/* GRID */}
-      {filteredAnime.length === 0 ? (
-
-        <div className="py-32 text-center">
-
-          <h2 className="text-4xl font-bold text-white">
-
-            No se encontraron animes
+            Explorar Anime
 
           </h2>
 
-          <p className="text-zinc-400 mt-4">
+          <p className="text-zinc-500 mt-2">
 
-            Prueba otra búsqueda o filtro.
+            {filteredAnime.length} resultados encontrados
 
           </p>
 
         </div>
 
-      ) : (
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+      {/* GRID */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
 
-          {filteredAnime.map(
-            (
-              anime,
-              index
-            ) => (
+        {filteredAnime.map(
+          (anime: any) => (
 
-            <AnimeCard
-              key={`${anime.mal_id}-${index}`}
-              id={anime.mal_id}
-              title={anime.title}
-              image={
-                anime.images.jpg
-                  .image_url
-              }
-              score={anime.score}
-            />
+          <AnimeCard
+            key={anime.mal_id}
+            id={anime.mal_id}
+            title={anime.title}
+            image={
+              anime.images.jpg
+                .large_image_url ||
 
-          ))}
+              anime.images.jpg
+                .image_url
+            }
+            score={
+              anime.score || 0
+            }
+          />
+
+        ))}
+
+      </div>
+
+      {/* EMPTY */}
+      {filteredAnime.length === 0 && (
+
+        <div className="mt-20 py-20 rounded-[32px] border border-white/10 bg-white/[0.02] text-center">
+
+          <h3 className="text-3xl font-bold">
+
+            No se encontraron animes
+
+          </h3>
+
+          <p className="text-zinc-400 mt-4">
+
+            Prueba otros filtros o búsquedas.
+
+          </p>
 
         </div>
 
       )}
 
-      {/* LOADING */}
-      {loading && (
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mt-10">
-
-          {Array.from({
-            length: 5,
-          }).map(
-            (_, index) => (
-
-            <SkeletonCard
-              key={index}
-            />
-
-          ))}
-
-        </div>
-
-      )}
-
-    </div>
+    </section>
   );
 }

@@ -14,10 +14,15 @@ import { motion } from "framer-motion";
 
 import { fadeUp } from "@/animations/fade";
 
+import DynamicHeroBackground from "@/components/home/DynamicHeroBackground";
+
 export default function HeroSection() {
 
   return (
-    <section className="relative h-screen min-h-[900px] overflow-hidden">
+    <section className="relative min-h-[760px] md:min-h-screen overflow-hidden">
+
+      {/* DYNAMIC HERO BACKGROUND */}
+      <DynamicHeroBackground />
 
       {/* VIDEO BACKGROUND */}
       <video
@@ -25,60 +30,62 @@ export default function HeroSection() {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover scale-105"
+        className="absolute inset-0 w-full h-full object-cover scale-105 opacity-70"
       >
+
         <source
           src="/videos/hero.mp4"
           type="video/mp4"
         />
+
       </video>
 
       {/* CINEMATIC LIGHTS */}
       <div className="absolute inset-0 overflow-hidden">
 
         {/* TOP LIGHT */}
-        <div className="absolute top-[-250px] left-[5%] w-[600px] h-[600px] bg-fuchsia-500/20 rounded-full blur-[200px] animate-pulse" />
+        <div className="absolute top-[-250px] left-[5%] w-[500px] h-[500px] md:w-[600px] md:h-[600px] bg-fuchsia-500/20 rounded-full blur-[180px] animate-pulse" />
 
         {/* RIGHT LIGHT */}
-        <div className="absolute bottom-[-250px] right-[5%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[200px] animate-pulse" />
+        <div className="absolute bottom-[-250px] right-[5%] w-[400px] h-[400px] md:w-[500px] md:h-[500px] bg-cyan-500/20 rounded-full blur-[180px] animate-pulse" />
 
       </div>
 
       {/* OVERLAYS */}
-      <Overlay opacity="bg-black/50" />
+      <Overlay opacity="bg-black/60" />
 
       <Overlay opacity="bg-gradient-to-r from-black via-black/70 to-black/20" />
 
       <Overlay opacity="bg-gradient-to-t from-black via-transparent to-transparent" />
 
       {/* CONTENT */}
-      <div className="relative z-10 flex items-center h-full">
+      <div className="relative z-10 flex items-center min-h-[760px] md:min-h-screen">
 
         <Container>
 
           <motion.div
-            className="max-w-4xl pt-32 md:pt-20"
+            className="max-w-4xl pt-24 md:pt-20"
             variants={fadeUp}
             initial="hidden"
             animate="visible"
           >
 
             {/* BADGE */}
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl text-sm text-zinc-200 mb-8 shadow-xl shadow-black/20">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl text-sm text-zinc-200 mb-6 shadow-xl shadow-black/20">
 
               {HERO_CONTENT.badge}
 
             </div>
 
             {/* TITLE */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight max-w-5xl">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight max-w-5xl">
 
               {HERO_CONTENT.title}
 
             </h1>
 
             {/* DESCRIPTION */}
-            <p className="mt-8 text-zinc-300 text-lg md:text-xl leading-relaxed max-w-2xl">
+            <p className="mt-6 text-zinc-300 text-base md:text-xl leading-relaxed max-w-2xl">
 
               {HERO_CONTENT.description}
 
@@ -92,30 +99,31 @@ export default function HeroSection() {
             </div>
 
             {/* BUTTONS */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-10">
+            <div className="flex flex-col sm:flex-row gap-4 mt-8">
 
-              <Button>
+              <Button href="/catalogo">
                 Explorar ahora
               </Button>
 
-              <Button variant="secondary">
+              <Button variant="secondary"
+              href="/temporadas">
                 Ver temporadas
               </Button>
 
             </div>
 
             {/* STATS */}
-            <div className="flex flex-wrap gap-6 md:gap-10 mt-14">
+            <div className="grid grid-cols-2 md:flex gap-4 md:gap-8 mt-12">
 
               {HERO_CONTENT.stats.map(
                 (stat) => (
 
                   <div
                     key={stat.label}
-                    className="rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl px-6 py-4 min-w-[120px]"
+                    className="rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl px-5 py-4 min-w-[120px]"
                   >
 
-                    <h3 className="text-3xl font-black">
+                    <h3 className="text-2xl md:text-3xl font-black">
 
                       {stat.value}
 

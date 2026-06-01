@@ -28,9 +28,9 @@ export default function TransitionProvider({
 
         initial={{
           opacity: 0,
-          y: 24,
-          scale: 0.985,
-          filter: "blur(8px)",
+          y: 40,
+          scale: 0.98,
+          filter: "blur(12px)",
         }}
 
         animate={{
@@ -42,18 +42,35 @@ export default function TransitionProvider({
 
         exit={{
           opacity: 0,
-          y: -24,
-          scale: 0.985,
-          filter: "blur(8px)",
+          y: -40,
+          scale: 0.98,
+          filter: "blur(12px)",
         }}
 
         transition={{
-          duration: 0.65,
-          ease: [0.22, 1, 0.36, 1],
+          duration: 0.8,
+          ease: [0.16, 1, 0.3, 1],
         }}
 
         className="min-h-screen will-change-transform"
       >
+
+        {/* CINEMATIC OVERLAY */}
+        <motion.div
+          initial={{
+            opacity: 0.15,
+          }}
+
+          animate={{
+            opacity: 0,
+          }}
+
+          transition={{
+            duration: 1,
+          }}
+
+          className="fixed inset-0 pointer-events-none bg-black z-[999]"
+        />
 
         {children}
 

@@ -1,3 +1,5 @@
+import RecentlyViewedTracker from "@/components/anime/RecentlyViewedTracker";
+
 import Image from "next/image";
 
 import Container from "@/components/ui/Container";
@@ -5,6 +7,8 @@ import Container from "@/components/ui/Container";
 import AnimeCard from "@/components/anime/AnimeCard";
 
 import FavoriteButton from "@/components/anime/FavoriteButton";
+
+import WatchProgress from "@/components/anime/WatchProgress";
 
 import {
   getAnimeById,
@@ -29,21 +33,110 @@ export default async function AnimePage({
   const anime =
     await getAnimeById(id);
 
-  const recommendations =
+  const rawRecommendations =
     await getAnimeRecommendations(id);
 
-  const characters =
+  const recommendations =
+    await Promise.all(
+
+      rawRecommendations
+        ?.slice(0, 10)
+        .map(
+          async (
+            rec: any
+          ) => {
+
+            try {
+
+              const response =
+                await fetch(
+                  `https://api.jikan.moe/v4/anime/${rec.entry.mal_id}`,
+                  {
+                    next: {
+                      revalidate: 3600,
+                    },
+                  }
+                );
+
+              const data =
+                await response.json();
+
+              return {
+                ...rec,
+
+                fullAnime:
+                  data.data,
+              };
+
+            } catch {
+
+              return null;
+
+            }
+
+          }
+        )
+
+    );
+
+  const safeRecommendations =
+    recommendations.filter(
+      Boolean
+    );
+
+  let characters = [];
+
+try {
+
+  characters =
     await getAnimeCharacters(id);
 
-  const pictures =
+} catch {
+
+  characters = [];
+
+}
+
+let pictures = [];
+
+try {
+
+  pictures =
     await getAnimePictures(id);
 
+} catch {
+
+  pictures = [];
+
+}
+
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white overflow-hidden">
 
-      {/* BACKDROP */}
-      <div className="relative h-[70vh] overflow-hidden">
+      {/* HERO */}
+      <section className="relative min-h-[72vh] overflow-hidden">
 
+        {/* TRACKER */}
+        <RecentlyViewedTracker
+          anime={{
+            mal_id:
+              anime.mal_id,
+
+            title:
+              anime.title,
+
+            image:
+              anime.images.jpg
+                .large_image_url ||
+              anime.images.jpg
+                .image_url,
+
+            score:
+              anime.score,
+          }}
+        />
+
+        {/* BACKDROP */}
         <Image
           src={
             anime.images.jpg
@@ -55,18 +148,21 @@ export default async function AnimePage({
           fill
           priority
           loading="eager"
-          className="object-cover blur-sm scale-110 opacity-30"
+          sizes="100vw"
+          className="object-cover scale-110 blur-md opacity-30"
         />
 
-        {/* OVERLAY */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
+        {/* OVERLAYS */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/70 to-black" />
+
+        <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/10 via-transparent to-cyan-500/10" />
 
         <Container>
 
-          <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-end h-[70vh] pb-16">
+          <div className="relative z-10 pt-36 pb-20 flex flex-col lg:flex-row gap-10 items-center lg:items-end">
 
             {/* POSTER */}
-            <div className="relative w-[280px] h-[400px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 shrink-0">
+            <div className="relative w-[220px] h-[320px] md:w-[260px] md:h-[380px] rounded-[32px] overflow-hidden border border-white/10 shadow-2xl shadow-black/50 shrink-0">
 
               <Image
                 src={
@@ -78,31 +174,24 @@ export default async function AnimePage({
                 alt={anime.title}
                 fill
                 loading="eager"
+                sizes="(max-width: 768px) 220px, 260px"
                 className="object-cover"
-                sizes="280px"
               />
 
             </div>
 
             {/* CONTENT */}
-            <div className="max-w-4xl">
-
-              {/* TITLE */}
-              <h1 className="text-5xl md:text-7xl font-black leading-[0.95]">
-
-                {anime.title}
-
-              </h1>
+            <div className="flex-1 max-w-4xl text-center lg:text-left">
 
               {/* GENRES */}
-              <div className="flex flex-wrap gap-3 mt-6">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
 
                 {anime.genres?.map(
                   (genre: any) => (
 
                     <span
                       key={genre.mal_id}
-                      className="px-4 py-2 rounded-full bg-white/10 border border-white/10 text-sm backdrop-blur-xl"
+                      className="px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-xl text-sm text-zinc-200"
                     >
 
                       {genre.name}
@@ -114,233 +203,207 @@ export default async function AnimePage({
 
               </div>
 
-              {/* INFO BAR */}
-              <div className="flex flex-wrap gap-4 mt-10">
+              {/* TITLE */}
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-black leading-[0.95] max-w-4xl mx-auto lg:mx-0">
 
-                {/* STREAMING */}
-                <div className="mt-10">
+                {anime.title}
 
-                  <p className="text-sm text-zinc-500 mb-4">
+              </h1>
 
-                    AVAILABLE ON
+              {/* META */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-8">
 
-                  </p>
-
-                  <div className="flex flex-wrap gap-4">
-
-                    {[
-                      "Crunchyroll",
-                      "Netflix",
-                      "Prime Video",
-                      "Disney+",
-                    ].map((platform) => (
-
-                      <div
-                        key={platform}
-                        className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl text-sm text-zinc-300 hover:bg-white/10 transition"
-                      >
-
-                        {platform}
-
-                      </div>
-
-                    ))}
-
-                  </div>
-
-                </div>
-
-                {/* SCORE */}
-                <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
 
                   <p className="text-xs text-zinc-500 mb-1">
+
                     SCORE
+
                   </p>
 
                   <p className="font-bold text-lg">
+
                     ⭐ {anime.score}
+
                   </p>
 
                 </div>
 
-                {/* EPISODES */}
-                <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
 
                   <p className="text-xs text-zinc-500 mb-1">
+
                     EPISODES
+
                   </p>
 
                   <p className="font-bold text-lg">
+
                     {anime.episodes || "?"}
+
                   </p>
 
                 </div>
 
-                {/* STATUS */}
-                <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
 
                   <p className="text-xs text-zinc-500 mb-1">
+
                     STATUS
+
                   </p>
 
                   <p className="font-bold text-lg">
+
                     {anime.status}
+
                   </p>
 
                 </div>
 
-                {/* YEAR */}
-                <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
 
                   <p className="text-xs text-zinc-500 mb-1">
+
                     YEAR
+
                   </p>
 
                   <p className="font-bold text-lg">
+
                     {anime.year || "?"}
-                  </p>
 
-                </div>
-
-                {/* RANK */}
-                <div className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-
-                  <p className="text-xs text-zinc-500 mb-1">
-                    RANK
-                  </p>
-
-                  <p className="font-bold text-lg">
-                    #{anime.rank || "?"}
                   </p>
 
                 </div>
 
               </div>
 
-              {/* FAVORITE BUTTON */}
-              <FavoriteButton
-                anime={{
-                  mal_id:
-                    anime.mal_id,
-                  title:
-                    anime.title,
-                  image:
-                    anime.images.jpg
-                      .image_url,
-                  score:
-                    anime.score,
-                }}
-              />
+              {/* STREAMING */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-8">
+
+                {[
+                  "Crunchyroll",
+                  "Netflix",
+                  "Prime Video",
+                  "Disney+",
+                ].map((platform) => (
+
+                  <div
+                    key={platform}
+                    className="px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl text-sm text-zinc-300 hover:bg-white/[0.08] transition"
+                  >
+
+                    {platform}
+
+                  </div>
+
+                ))}
+
+              </div>
+
+              {/* ACTIONS */}
+              <div className="flex flex-col lg:flex-row gap-6 mt-10 items-center lg:items-start">
+
+                <FavoriteButton
+                  anime={{
+                    mal_id:
+                      anime.mal_id,
+
+                    title:
+                      anime.title,
+
+                    image:
+                      anime.images.jpg
+                        .image_url,
+
+                    score:
+                      anime.score,
+                  }}
+                />
+
+                <div className="max-w-[320px] w-full">
+
+                  <WatchProgress
+                    animeId={
+                      anime.mal_id
+                    }
+                    totalEpisodes={
+                      anime.episodes || 0
+                    }
+                  />
+
+                </div>
+
+              </div>
 
             </div>
 
           </div>
 
-          {/* SCREENSHOTS */}
-<section className="mt-32">
-
-  <div className="flex items-center justify-between mb-10">
-
-    <h2 className="text-4xl font-bold">
-
-      Screenshots
-
-    </h2>
-
-  </div>
-
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    {pictures
-      ?.slice(0, 6)
-      .map(
-        (
-          picture: any,
-          index: number
-        ) => (
-
-        <div
-          key={index}
-          className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 group"
-        >
-
-          <Image
-            src={
-              picture.jpg
-                .large_image_url ||
-              picture.jpg
-                .image_url
-            }
-            alt="Anime Screenshot"
-            fill
-            className="object-cover transition duration-700 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-
-        </div>
-
-      ))}
-
-  </div>
-
-</section>
-
         </Container>
 
-      </div>
+      </section>
 
-      {/* CONTENT */}
+      {/* TRANSITION */}
+      <div className="relative z-20 -mt-10 h-10 rounded-t-[40px] bg-black border-t border-white/10" />
+
       <Container>
 
-        {/* SYNOPSIS */}
-        <section className="mt-20 max-w-4xl">
+        {/* SYNOPSIS + TRAILER */}
+        <section className="mt-20 grid lg:grid-cols-[1fr_420px] gap-16 items-start">
 
-          <h2 className="text-4xl font-bold mb-8">
+          {/* SYNOPSIS */}
+          <div className="max-w-2xl">
 
-            Synopsis
+            <h2 className="text-4xl font-bold mb-6">
 
-          </h2>
-
-          <p className="text-zinc-300 leading-relaxed text-lg">
-
-            {anime.synopsis}
-
-          </p>
-
-        </section>
-
-        {/* TRAILER */}
-        {anime.trailer?.embed_url && (
-
-          <section className="mt-24">
-
-            <h2 className="text-4xl font-bold mb-10">
-
-              Trailer
+              Synopsis
 
             </h2>
 
-            <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
+            <p className="text-zinc-300 leading-relaxed text-base md:text-lg">
 
-              <iframe
-                src={
-                  anime.trailer
-                    .embed_url
-                }
-                allowFullScreen
-                className="w-full h-full"
-              />
+              {anime.synopsis}
+
+            </p>
+
+          </div>
+
+          {/* TRAILER */}
+          {anime.trailer?.embed_url && (
+
+            <div>
+
+              <h2 className="text-3xl font-bold mb-6">
+
+                Trailer
+
+              </h2>
+
+              <div className="relative aspect-video rounded-[28px] overflow-hidden border border-white/10 shadow-2xl shadow-black/40">
+
+                <iframe
+                  src={
+                    anime.trailer
+                      .embed_url
+                  }
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+
+              </div>
 
             </div>
 
-          </section>
+          )}
 
-        )}
+        </section>
 
         {/* RECOMMENDATIONS */}
-        <section className="mt-32">
+        <section className="mt-28">
 
-          <div className="flex items-center justify-between mb-10">
+          <div className="mb-8">
 
             <h2 className="text-4xl font-bold">
 
@@ -348,13 +411,19 @@ export default async function AnimePage({
 
             </h2>
 
+            <p className="text-zinc-500 mt-2">
+
+              Similar anime you may enjoy.
+
+            </p>
+
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
 
-            {recommendations
-              ?.slice(0, 10)
-              .map((rec: any) => (
+            {safeRecommendations.filter(
+              (rec: any) => rec?.fullAnime
+            ).map((rec: any) => (
 
               <AnimeCard
                 key={
@@ -364,13 +433,21 @@ export default async function AnimePage({
                   rec.entry.mal_id
                 }
                 title={
-                  rec.entry.title
+                  rec.fullAnime.title
                 }
                 image={
-                  rec.entry.images.jpg
+                  rec.fullAnime
+                    .images.jpg
+                    .large_image_url ||
+
+                  rec.fullAnime
+                    .images.jpg
                     .image_url
                 }
-                score={0}
+                score={
+                  rec.fullAnime
+                    .score || 0
+                }
               />
 
             ))}
@@ -379,20 +456,84 @@ export default async function AnimePage({
 
         </section>
 
+        {/* SCREENSHOTS */}
+        <section className="mt-28">
+
+          <div className="mb-8">
+
+            <h2 className="text-3xl font-bold">
+
+              Screenshots
+
+            </h2>
+
+            <p className="text-zinc-500 mt-2">
+
+              Cinematic moments from the anime.
+
+            </p>
+
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {pictures
+              ?.slice(0, 6)
+              .map(
+                (
+                  picture: any,
+                  index: number
+                ) => (
+
+                <div
+                  key={index}
+                  className="relative aspect-video rounded-[28px] overflow-hidden border border-white/10 group"
+                >
+
+                  <Image
+                    src={
+                      picture.jpg
+                        .large_image_url ||
+
+                      picture.jpg
+                        .image_url
+                    }
+                    alt="Anime Screenshot"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+
+                </div>
+
+              ))}
+
+          </div>
+
+        </section>
+
         {/* CHARACTERS */}
-        <section className="mt-32">
+        <section className="mt-28 pb-32">
 
-          <div className="flex items-center justify-between mb-10">
+          <div className="mb-8">
 
-            <h2 className="text-4xl font-bold">
+            <h2 className="text-3xl font-bold">
 
               Characters
 
             </h2>
 
+            <p className="text-zinc-500 mt-2">
+
+              Main cast and important roles.
+
+            </p>
+
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">
 
             {characters
               ?.slice(0, 12)
@@ -403,24 +544,23 @@ export default async function AnimePage({
                   character.character
                     .mal_id
                 }
-                className="group bg-white/5 border border-white/10 rounded-3xl overflow-hidden hover:bg-white/10 transition duration-300"
+                className="group bg-white/[0.03] border border-white/10 rounded-[28px] overflow-hidden hover:bg-white/[0.05] transition duration-300"
               >
 
-                <div className="relative h-[260px] overflow-hidden">
+                <div className="relative h-[220px] overflow-hidden">
 
                   <Image
                     src={
                       character.character
                         .images.jpg
                         .image_url
-                        
                     }
                     alt={
                       character.character
                         .name
                     }
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 16vw"
                     fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 16vw"
                     className="object-cover transition duration-700 group-hover:scale-110"
                   />
 
@@ -437,7 +577,7 @@ export default async function AnimePage({
 
                   </h3>
 
-                  <p className="text-zinc-400 text-sm mt-2">
+                  <p className="text-zinc-500 text-sm mt-1">
 
                     {character.role}
 
