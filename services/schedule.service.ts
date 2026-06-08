@@ -1,26 +1,25 @@
+import { fetcher } from "@/lib/fetcher";
+
+const BASE_URL =
+  "https://api.jikan.moe/v4";
+
 export async function getScheduleDay(
   day: string
 ) {
 
-  const response =
-    await fetch(
-      `https://api.jikan.moe/v4/schedules/${day}`,
-      {
-        next: {
-          revalidate: 3600,
-        },
-      }
-    );
+  try {
 
-  if (!response.ok) {
+    const data =
+      await fetcher(
+        `${BASE_URL}/schedules/${day}`
+      );
+
+    return data.data || [];
+
+  } catch {
 
     return [];
 
   }
-
-  const data =
-    await response.json();
-
-  return data.data || [];
 
 }

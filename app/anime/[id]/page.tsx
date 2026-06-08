@@ -10,6 +10,8 @@ import FavoriteButton from "@/components/anime/FavoriteButton";
 
 import WatchProgress from "@/components/anime/WatchProgress";
 
+import RatingSelector from "@/components/anime/RatingSelector";
+
 import {
   getAnimeById,
   getAnimeRecommendations,
@@ -30,82 +32,32 @@ export default async function AnimePage({
   const { id } =
     await params;
 
-  const anime =
-    await getAnimeById(id);
+  const [
+  anime,
+  recommendations,
+] = await Promise.all([
 
-  const rawRecommendations =
-    await getAnimeRecommendations(id);
+  getAnimeById(id),
+  getAnimeRecommendations(id),
 
-  const recommendations =
-    await Promise.all(
+]);
 
-      rawRecommendations
-        ?.slice(0, 10)
-        .map(
-          async (
-            rec: any
-          ) => {
-
-            try {
-
-              const response =
-                await fetch(
-                  `https://api.jikan.moe/v4/anime/${rec.entry.mal_id}`,
-                  {
-                    next: {
-                      revalidate: 3600,
-                    },
-                  }
-                );
-
-              const data =
-                await response.json();
-
-              return {
-                ...rec,
-
-                fullAnime:
-                  data.data,
-              };
-
-            } catch {
-
-              return null;
-
-            }
-
-          }
-        )
-
-    );
-
-  const safeRecommendations =
-    recommendations.filter(
-      Boolean
-    );
-
-  let characters = [];
-
-try {
-
-  characters =
-    await getAnimeCharacters(id);
-
-} catch {
-
-  characters = [];
-
-}
-
+let characters = [];
 let pictures = [];
 
 try {
 
-  pictures =
-    await getAnimePictures(id);
+  [characters, pictures] =
+    await Promise.all([
+
+      getAnimeCharacters(id),
+      getAnimePictures(id),
+
+    ]);
 
 } catch {
 
+  characters = [];
   pictures = [];
 
 }
@@ -333,6 +285,12 @@ try {
                     }
                   />
 
+                  <RatingSelector
+                    animeId={
+                      anime.mal_id
+                    }
+                  />
+
                 </div>
 
               </div>
@@ -420,37 +378,22 @@ try {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-
-            {safeRecommendations.filter(
-              (rec: any) => rec?.fullAnime
-            ).map((rec: any) => (
+          {recommendations
+            ?.slice(0, 10)
+            .map((rec: any) => (
 
               <AnimeCard
-                key={
-                  rec.entry.mal_id
-                }
-                id={
-                  rec.entry.mal_id
-                }
-                title={
-                  rec.fullAnime.title
-                }
+                key={rec.entry.mal_id}
+                id={rec.entry.mal_id}
+                title={rec.entry.title}
                 image={
-                  rec.fullAnime
-                    .images.jpg
-                    .large_image_url ||
-
-                  rec.fullAnime
-                    .images.jpg
-                    .image_url
+                  rec.entry.images.jpg.large_image_url ||
+                  rec.entry.images.jpg.image_url
                 }
-                score={
-                  rec.fullAnime
-                    .score || 0
-                }
+                score={0}
               />
 
-            ))}
+))}
 
           </div>
 

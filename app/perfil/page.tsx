@@ -20,6 +20,8 @@ import ProfileAchievements from "@/components/profile/ProfileAchievements";
 
 import ContinueWatching from "@/components/profile/ContinueWatching";
 
+import ProfileStats from "@/components/profile/ProfileStats";
+
 export default async function PerfilPage() {
 
   const session =
@@ -165,6 +167,9 @@ export default async function PerfilPage() {
 
           {/* CONTINUE WATCHING */}
           <ContinueWatching />
+          
+          {/* PROFILE STATS */}
+          <ProfileStats />
 
           {/* FAVORITES */}
           <section>

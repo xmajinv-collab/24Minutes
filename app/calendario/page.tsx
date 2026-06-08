@@ -1,58 +1,86 @@
 import Container from "@/components/ui/Container";
 
-export default function CalendarioPage() {
+import DaySchedule from "@/components/calendar/DaySchedule";
 
-  const days = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ];
+import { getScheduleDay } from "@/services/schedule.service";
+
+export default async function CalendarioPage() {
+
+  const [
+    monday,
+    tuesday,
+    wednesday,
+    thursday,
+    friday,
+    saturday,
+    sunday,
+  ] = await Promise.all([
+
+    getScheduleDay("monday"),
+    getScheduleDay("tuesday"),
+    getScheduleDay("wednesday"),
+    getScheduleDay("thursday"),
+    getScheduleDay("friday"),
+    getScheduleDay("saturday"),
+    getScheduleDay("sunday"),
+
+  ]);
 
   return (
-    <main className="min-h-screen bg-black text-white pt-32">
+    <main className="min-h-screen bg-black text-white pt-40">
 
       <Container>
 
         <div className="mb-20">
 
-          <h1 className="text-5xl md:text-7xl font-black">
+          <h1 className="text-6xl font-black">
 
             Calendario Anime
 
           </h1>
 
-          <p className="text-zinc-400 mt-6 text-lg max-w-3xl">
+          <p className="text-zinc-400 mt-4 text-lg">
 
-            Descubre qué animes se emiten cada día de la semana.
+            Descubre qué animes se emiten cada día.
 
           </p>
 
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <DaySchedule
+          title="Lunes"
+          anime={monday}
+        />
 
-          {days.map((day) => (
+        <DaySchedule
+          title="Martes"
+          anime={tuesday}
+        />
 
-            <div
-              key={day}
-              className="rounded-3xl border border-white/10 bg-white/[0.03] p-8"
-            >
+        <DaySchedule
+          title="Miércoles"
+          anime={wednesday}
+        />
 
-              <h2 className="text-2xl font-bold capitalize">
+        <DaySchedule
+          title="Jueves"
+          anime={thursday}
+        />
 
-                {day}
+        <DaySchedule
+          title="Viernes"
+          anime={friday}
+        />
 
-              </h2>
+        <DaySchedule
+          title="Sábado"
+          anime={saturday}
+        />
 
-            </div>
-
-          ))}
-
-        </div>
+        <DaySchedule
+          title="Domingo"
+          anime={sunday}
+        />
 
       </Container>
 

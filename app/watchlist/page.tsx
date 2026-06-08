@@ -111,6 +111,15 @@ export default function WatchlistPage() {
           title="Watchlist"
           description="Tus animes favoritos guardados."
         />
+        <div className="mt-8 mb-10">
+
+  <p className="text-zinc-400">
+
+    {favorites.length} animes guardados
+
+  </p>
+
+</div>
 
         {favorites.length === 0 ? (
 

@@ -24,6 +24,7 @@ export default function WatchProgress({
 
   const { data: session } =
     useSession();
+    
 
   const [episode, setEpisode] =
     useState(0);
