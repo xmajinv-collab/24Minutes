@@ -10,9 +10,13 @@ import {
   getTopAnime,
 } from "@/services/anime.service";
 
+import {
+  Anime,
+} from "@/types/anime";
+
 export default async function TrendingSection() {
 
-  let animeList = [];
+  let animeList: Anime[] =  [];
 
   try {
 
