@@ -42,6 +42,56 @@ export default async function PerfilPage() {
         session.user?.email
       );
 
+  const { data: progress } =
+  await supabase
+    .from("watch_progress")
+    .select("*")
+    .eq(
+      "user_email",
+      session.user?.email
+    );
+
+const { data: ratings } =
+  await supabase
+    .from("anime_ratings")
+    .select("*")
+    .eq(
+      "user_email",
+      session.user?.email
+    );
+
+const totalEpisodes =
+  progress?.reduce(
+    (acc, anime) =>
+      acc +
+      anime.current_episode,
+    0
+  ) || 0;
+
+const averageRating =
+  ratings?.length
+    ? (
+        ratings.reduce(
+          (acc, anime) =>
+            acc +
+            anime.rating,
+          0
+        ) /
+        ratings.length
+      ).toFixed(1)
+    : "0";
+
+const bestRated =
+  ratings?.length
+    ? ratings.reduce(
+        (best, anime) =>
+          anime.rating >
+          best.rating
+            ? anime
+            : best
+      )
+    : null;
+
   return (
     <main className="relative min-h-screen bg-black text-white overflow-hidden">
 
@@ -145,6 +195,38 @@ export default async function PerfilPage() {
                   <p className="font-bold text-lg">
 
                     {favorites?.length || 0}
+
+                  </p>
+
+                </div>
+
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
+
+                  <p className="text-xs text-zinc-500 mb-1">
+
+                    AVERAGE RATING
+
+                  </p>
+
+                  <p className="font-bold text-lg">
+
+                    {averageRating}
+
+                  </p>
+
+                </div>
+
+                <div className="px-5 py-3 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
+
+                  <p className="text-xs text-zinc-500 mb-1">
+
+                    BEST RATED
+
+                  </p>
+
+                  <p className="font-bold text-lg">
+
+                    {bestRated ? bestRated.title : "N/A"}
 
                   </p>
 

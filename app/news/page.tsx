@@ -7,6 +7,43 @@ export default async function NewsPage() {
   const news =
     await getAnimeNews();
 
+  if (!news.length) {
+
+    return (
+      <main className="min-h-screen bg-black text-white pt-32">
+
+        <Container>
+
+          <div className="py-32 text-center">
+
+            <div className="text-7xl mb-8">
+
+              📰
+
+            </div>
+
+            <h1 className="text-4xl font-black">
+
+              No hay noticias disponibles
+
+            </h1>
+
+            <p className="text-zinc-500 mt-4">
+
+              Vuelve más tarde para descubrir las
+              últimas novedades del mundo anime.
+
+            </p>
+
+          </div>
+
+        </Container>
+
+      </main>
+    );
+
+  }
+
   return (
     <main className="min-h-screen bg-black text-white pt-32">
 
@@ -30,12 +67,14 @@ export default async function NewsPage() {
             <h1 className="text-4xl md:text-7xl font-black">
 
               Noticias Anime
+
             </h1>
 
             <p className="text-zinc-400 mt-6 text-base md:text-lg max-w-3xl leading-relaxed">
 
               Mantente al día con las últimas noticias,
-              anuncios, estrenos y novedades del mundo anime y manga.
+              anuncios, estrenos y novedades del mundo
+              anime y manga.
 
             </p>
 
@@ -49,56 +88,84 @@ export default async function NewsPage() {
           {news.map(
             (item, index) => (
 
-            <a
-              key={index}
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group rounded-[32px] border border-white/10 bg-white/[0.03] overflow-hidden hover:bg-white/[0.05] hover:border-white/20 transition duration-500"
-            >
+              <a
+                key={index}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  group
+                  rounded-[32px]
+                  border
+                  border-white/10
+                  bg-white/[0.03]
+                  overflow-hidden
+                  hover:bg-white/[0.05]
+                  hover:border-white/20
+                  hover:-translate-y-2
+                  transition-all
+                  duration-500
+                "
+              >
 
-              {/* TOP */}
-              <div className="h-2 bg-gradient-to-r from-fuchsia-500 to-cyan-500" />
+                {/* TOP BAR */}
+                <div className="h-2 bg-gradient-to-r from-fuchsia-500 to-cyan-500" />
 
-              {/* CONTENT */}
-              <div className="p-8">
+                {/* CONTENT */}
+                <div className="p-8">
 
-                <div className="flex items-center gap-3 text-sm text-zinc-500 mb-5">
+                  <div className="flex items-center gap-3 text-sm text-zinc-500 mb-5">
 
-                  <span>
-                    NEWS
-                  </span>
+                    <span>
 
-                  <span>
-                    •
-                  </span>
+                      NEWS
 
-                  <span>
+                    </span>
 
-                    {new Date(
-                      item.pubDate || ""
-                    ).toLocaleDateString()}
+                    <span>
 
-                  </span>
+                      •
+
+                    </span>
+
+                    <span>
+
+                      {new Date(
+                        item.pubDate || ""
+                      ).toLocaleDateString()}
+
+                    </span>
+
+                  </div>
+
+                  <h2 className="text-xl md:text-2xl font-bold leading-snug group-hover:text-fuchsia-300 transition duration-500">
+
+                    {item.title}
+
+                  </h2>
+
+                  <div className="mt-8 flex items-center justify-between">
+
+                    <span className="text-zinc-500 text-sm">
+
+                      Anime News Network
+
+                    </span>
+
+                    <span className="text-zinc-300 group-hover:text-white transition">
+
+                      Leer →
+
+                    </span>
+
+                  </div>
 
                 </div>
 
-                <h2 className="text-xl md:text-2xl font-bold leading-snug group-hover:text-fuchsia-300 transition">
+              </a>
 
-                  {item.title}
-
-                </h2>
-
-                <div className="mt-8 text-zinc-400 group-hover:text-white transition">
-
-                  Leer noticia →
-                </div>
-
-              </div>
-
-            </a>
-
-          ))}
+            )
+          )}
 
         </div>
 
